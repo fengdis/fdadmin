@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('缓存监控')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="redis-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>关键词搜索：</label><input type="text" name="key"/>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            <a class="btn btn-danger btn-rounded btn-sm" onclick="$.operate.clean()"><i class="fa fa-trash"></i>&nbsp;清空</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="monitor:redis:remove">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-danger" onclick="$.operate.clean()" shiro:hasPermission="monitor:redis:remove">
+                <i class="fa fa-trash"></i> 清空
+            </a>
+            <!--<a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="monitor:redis:export">
+                <i class="fa fa-download"></i> 导出
+            </a>-->
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "monitor/redis";
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            cleanUrl: prefix + "/clean",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            sortName: "",
+            sortOrder: "desc",
+            modalName: "系统缓存",
+            escape: true,
+            showPageGo: true,
+            rememberSelected: true,
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+                {
+                    field: 'key',
+                    title: 'key',
+                    width: '30%'
+                },
+                {
+                    field: 'value',
+                    title: 'value'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

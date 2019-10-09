@@ -1,0 +1,19 @@
+package com.fengdis.common.enums;
+
+/**
+ * 数据源
+ * 
+ * @author fengdis
+ */
+public enum DataSourceType
+{
+    /**
+     * 主库
+     */
+    MASTER,
+
+    /**
+     * 从库
+     */
+    SLAVE
+}
