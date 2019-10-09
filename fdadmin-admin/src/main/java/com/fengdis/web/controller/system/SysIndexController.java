@@ -52,8 +52,10 @@ public class SysIndexController extends BaseController
         SysUser user = ShiroUtils.getSysUser();
         mmap.put("user", user);
         mmap.put("version", Global.getVersion());
-        /*SysNotice sysNotice = iSysNoticeService.selectNoticeByType("2");
-        mmap.put("notice",sysNotice);*/
+        List<SysNotice> notice1 = iSysNoticeService.selectNoticeByType("1");
+        List<SysNotice> notice2 = iSysNoticeService.selectNoticeByType("2");
+        mmap.put("notice1",notice1);
+        mmap.put("notice2",notice2);
         return "main";
     }
 }

@@ -15,6 +15,28 @@
 <body class="gray-bg">
 
     <div class="row wrapper wrapper-content">
+        <div class="col-sm-12">
+            <!--<blockquote class="text-warning" style="font-size:14px">
+                                           领取阿里云通用云产品1888优惠券
+                <br><a target="_blank" href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=brki8iof">https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=brki8iof</a><br>
+                                           领取腾讯云通用云产品2860优惠券
+                <br><a target="_blank" href="https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console">https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console</a><br>
+                                           阿里云Hi拼购 限量爆款 低至199元/年
+                <br><a target="_blank" href="https://www.aliyun.com/acts/hi-group-buying?userCode=brki8iof">https://www.aliyun.com/acts/hi-group-buying?userCode=brki8iof</a>
+                <h4 class="text-danger">云产品通用红包，可叠加官网常规优惠使用。(仅限新用户)</h4>
+            </blockquote>-->
+            <blockquote class="text-danger">
+                <marquee scrollamount="10" onmouseout="this.start()" onmouseover="this.stop()">
+                    <span id="marquee" style="font-size: 20px;font-weight: bold">
+                        欢迎您:[[${user.userName}]],您的登录时间为&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span th:each="notice : ${notice2}">
+                            [[${notice.noticeTitle}]]
+                        </span>
+                    </span>
+                </marquee>
+            </blockquote>
+        </div>
+
         <div class="col-sm-3">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
@@ -71,29 +93,39 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>周流量</h5>
+                    <!--<div class="ibox-tools">
+                        <a class="collapse-link">
+                            <i class="fa fa-chevron-up"></i>
+                        </a>
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:void(0);">
+                            <i class="fa fa-wrench"></i>
+                        </a>
+                        <ul class="dropdown-menu dropdown-user">
+                            <li><a href="javascript:void(0);">选项1</a>
+                            </li>
+                            <li><a href="javascript:void(0);">选项2</a>
+                            </li>
+                        </ul>
+                        <a class="close-link">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </div>-->
+                </div>
+                <div class="ibox-content">
+                    <div class="echarts" id="echarts-line-chart"></div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="row border-bottom white-bg dashboard-header">
-        <div class="col-sm-12">
-            <!--<blockquote class="text-warning" style="font-size:14px">
-                                           领取阿里云通用云产品1888优惠券
-                <br><a target="_blank" href="https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=brki8iof">https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=brki8iof</a><br>
-                                           领取腾讯云通用云产品2860优惠券
-                <br><a target="_blank" href="https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console">https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console</a><br>
-                                           阿里云Hi拼购 限量爆款 低至199元/年
-                <br><a target="_blank" href="https://www.aliyun.com/acts/hi-group-buying?userCode=brki8iof">https://www.aliyun.com/acts/hi-group-buying?userCode=brki8iof</a>
-                <h4 class="text-danger">云产品通用红包，可叠加官网常规优惠使用。(仅限新用户)</h4>
-            </blockquote>-->
-            <blockquote class="text-danger">
-                <marquee scrollamount="10" onmouseout="this.start()" onmouseover="this.stop()">
-                    <span id="marquee" style="font-size: 20px;font-weight: bold">
-                        欢迎您:,您的登录时间为&nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="row wrapper wrapper-content border-bottom white-bg dashboard-header">
 
-                    </span>
-                </marquee>
-            </blockquote>
-            <hr>
-        </div>
         <div class="col-sm-3">
             <h2>关注官方公众号</h2>
             <img th:src="@{/img/wechat_public_qrcode.jpg}" width="100%" style="max-width:264px;">
@@ -163,6 +195,7 @@
                     <div class="ibox-content no-padding">
                         <div class="panel-body">
                             <div class="panel-group" id="version">
+
                                 <div class="panel panel-default">
                                     <div class="panel-heading">
                                         <h5 class="panel-title">
@@ -265,8 +298,123 @@
     <script th:src="@{/js/jquery.min.js}"></script>
     <script th:src="@{/js/bootstrap.min.js}"></script>
     <script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+    <script th:src="@{/ajax/libs/report/echarts/echarts-all.js}"></script>
 
     <script th:inline="javascript"> var ctx = [[@{/}]]; </script>
+
+    <script type="text/javascript">
+        var lineChart = echarts.init(document.getElementById("echarts-line-chart"));
+        var colors = ['#5793f3', '#d14a61', '#675bba'];
+
+        var lineoption = {
+            color: colors,
+            title: {
+                text: ''
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross'
+                },
+                padding: [5, 10]
+            },
+            legend: {
+                data: ['pv', 'ip']
+            },
+            grid: {
+                top: 10,
+                left: 10,
+                right: 20,
+                bottom: 10,
+                containLabel: true
+            },
+            calculable: true,
+            xAxis: [
+                {
+                    type: 'category',
+                    boundaryGap: false,
+                    axisTick: {
+                        show: false
+                    },
+                    data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: 'pv',
+                    smooth: true,
+                    type: 'line',
+                    data: [11, 31, 55, 83, 112, 88, 66],
+                    animationDuration: 2800,
+                    animationEasing: 'cubicInOut',
+                    itemStyle: {
+                        normal: {
+                            color: '#FF005A',
+                            lineStyle: {
+                                color: '#FF005A',
+                                width: 2
+                            }
+                        }
+                    },
+                    markPoint: {
+                        data: [
+                            {type: 'max', name: '最大值'},
+                            {type: 'min', name: '最小值'}
+                        ]
+                    },
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
+                        ]
+                    }
+                },
+                {
+                    name: 'ip',
+                    smooth: true,
+                    type: 'line',
+                    data: [10, 24, 52, 75, 103, 77, 55],
+                    animationDuration: 2800,
+                    animationEasing: 'quadraticOut',
+                    itemStyle: {
+                        normal: {
+                            color: '#3888fa',
+                            lineStyle: {
+                                color: '#3888fa',
+                                width: 2
+                            },
+                            areaStyle: {
+                                color: '#f3f8ff'
+                            }
+                        }
+                    },
+                    markPoint: {
+                        data: [
+                            {name: '周最低', value: -2, xAxis: 1, yAxis: -1.5}
+                        ]
+                    },
+                    markLine: {
+                        data: [
+                            {type: 'average', name: '平均值'}
+                        ]
+                    }
+                }
+            ]
+        };
+        lineChart.setOption(lineoption);
+        $(window).resize(lineChart.resize);
+
+    </script>
 
     <script type="text/javascript">
 	    $('#pay-qrcode').click(function(){
@@ -281,7 +429,7 @@
 	        });
 	    });
 
-        $.ajax({
+        /*$.ajax({
             url: ctx + "system/notice/query",
             data: {
                 noticeType: "2"
@@ -307,7 +455,7 @@
                     console.log(object)
                 });
             }
-        });
+        });*/
 
     </script>
 </body>
