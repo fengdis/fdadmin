@@ -40,10 +40,10 @@
 <table>
     <tr>
         <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin01.jpg"/></td>
-        <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin02.jpg"/></td>
+        <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin01.jpg"/></td>
     </tr>
     <tr>
-        <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin01.jpg"/></td>
+        <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin02.jpg"/></td>
         <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin02.jpg"/></td>
     </tr>
 </table>
