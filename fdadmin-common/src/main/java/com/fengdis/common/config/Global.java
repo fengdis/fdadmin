@@ -1,13 +1,12 @@
 package com.fengdis.common.config;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fengdis.common.util.PropertiesUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fengdis.common.utils.StringUtils;
-import com.fengdis.common.utils.YamlUtil;
 
 /**
  * 全局配置类
@@ -18,8 +17,8 @@ public class Global
 {
     private static final Logger log = LoggerFactory.getLogger(Global.class);
 
-    private static String NAME = "application.yml";
-    //private static String NAME = "application.properties";
+    //private static String NAME = "application.yml";
+    private static String NAME = "application.properties";
 
     /**
      * 当前对象实例
@@ -29,7 +28,7 @@ public class Global
     /**
      * 保存全局属性值
      */
-    private static Map<String, String> map = new HashMap<String, String>();
+    private static Map<String, String> map = new HashMap<>();
 
     private Global()
     {
@@ -52,7 +51,7 @@ public class Global
      */
     public static String getConfig(String key)
     {
-        String value = map.get(key);
+        /*String value = map.get(key);
         if (value == null)
         {
             Map<?, ?> yamlMap = null;
@@ -67,10 +66,8 @@ public class Global
                 log.error("获取全局配置异常 {}", key);
             }
         }
-        return value;
-
-        /*String value = PropertiesUtils.getConfig(NAME).getString(key);
         return value;*/
+        return PropertiesUtils.getConfig(NAME).getString(key);
     }
 
     /**

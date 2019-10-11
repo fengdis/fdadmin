@@ -3,17 +3,14 @@ package com.fengdis.common.util;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * @version 1.0
@@ -28,58 +25,47 @@ public class PropertiesUtils {
 
 	private static final Logger logger = LoggerFactory.getLogger(PropertiesUtils.class);
 
+	/**
+	 * 默认把system.properties中的属性放入静态map中
+	 */
+	public static Map<String, String> propertiesMap = new HashMap<>();
+
 	private static Properties properties;
 
 	private static Configuration configuration;
-   
+
 	static {
-        properties = loadProp("system.properties");
+        //properties = loadProperties("system.properties");
+		/*if (null != properties) {
+			Iterator<Object> keys = properties.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = keys.next().toString();
+				String value = properties.getProperty(key);
+				if(!propertiesMap.containsKey(key)){
+					propertiesMap.put(key, value);
+				}
+			}
+		}*/
         configuration = getConfig("system.properties");
+		if (null != configuration) {
+			Iterator keys = configuration.getKeys();
+			while (keys.hasNext()) {
+				String key = keys.next().toString();
+				String value = configuration.getString(key);
+				if(!propertiesMap.containsKey(key)){
+					propertiesMap.put(key, value);
+				}
+			}
+		}
     }
 
 	/**
-	 * 获得系统配置文件的值（默认为system.properties）
-	 * @param key key值
-	 * @param defaultValue 默认值
-	 * @return
-	 */
-	@Deprecated
-	public static String getProperty(String key, String defaultValue){
-		if(properties != null){
-			String property = properties.getProperty(key);
-			if(StringUtils.isNotBlank(property)){
-				return property;
-			}
-		}
-		return defaultValue;
-	}
-
-	/**
-	 * 获得指定配置文件的值
-	 * @param fileName 指定配置文件路径
-	 * @param key key值
-	 * @param defaultValue 默认值
-	 * @return
-	 */
-	@Deprecated
-	public static String getProperty(String fileName, String key, String defaultValue){
-		Properties localProp = loadProp(fileName);
-		if(localProp != null){
-			String property = localProp.getProperty(key);
-			if(StringUtils.isNotBlank(property)){
-				return property;
-			}
-		}
-		return defaultValue;
-	}
-
-	/**
-	 * 根据类路径获取Properties对象
+	 * 根据文件路径获取Properties对象（java.util包中Properties）
 	 * @param path
 	 * @return
 	 */
 	@Deprecated
-	private static Properties loadProp(String path) {
+	private static Properties loadProperties(String path) {
 		Properties properties = new Properties();
         try {
             InputStream inputStream = PropertiesUtils.class.getClassLoader().getResourceAsStream(path);
@@ -94,7 +80,7 @@ public class PropertiesUtils {
 
 	/**
 	 * 采用apache.common包中的Configuration获取配置信息，放弃使用java.util包中Properties
-	 * 根据文件名获取Configuration对象
+	 * 根据文件路径获取Configuration对象
 	 * @param fileName
 	 * @return
 	 */
@@ -108,14 +94,6 @@ public class PropertiesUtils {
         }
         return null;
     }
-
-	public static String getString(String fileName,String key, String defaultValue){
-		Configuration config = getConfig(fileName);
-		if(config != null){
-			return config.getString(key, defaultValue);
-		}
-		return defaultValue;
-	}
 
 	public static String getString(String key, String defaultValue){
 		if(configuration != null){
