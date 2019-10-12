@@ -3,6 +3,7 @@ package com.fengdis.common.component.rpc.redis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
@@ -17,6 +18,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @since: 2019/08/28 17:26
  */
 @Configuration
+@ConditionalOnExpression("${redis.enabled:false}")
 public class JedisConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(JedisConfig.class);
@@ -70,7 +72,6 @@ public class JedisConfig {
 
     @Bean
     public JedisPool jedisPoolFactory() throws Exception{
-        logger.info(String.format("JedisPool注入成功 %s:%s",host,port));
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setMinIdle(minIdle);
@@ -81,11 +82,12 @@ public class JedisConfig {
         // 是否启用pool的jmx管理功能, 默认true
         jedisPoolConfig.setJmxEnabled(true);
         JedisPool jedisPool = new JedisPool(jedisPoolConfig, host, port, timeout);
+        logger.info(String.format("JedisPool build success %s#%s#%s",host,port,jedisPool));
         return jedisPool;
     }
 
     /*@Bean
-    public RedisConnectionFactory jedisPoolFactory() {
+    public JedisConnectionFactory jedisPoolFactory() {
         JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
         jedisPoolConfig.setMaxIdle(maxIdle);
         jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);

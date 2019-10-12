@@ -1,69 +1,184 @@
 package com.fengdis.common.component.rpc.hbase;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import com.fengdis.common.util.DateUtils;
-import com.fengdis.common.util.PropertiesUtils;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.Cell;
-import org.apache.hadoop.hbase.CellUtil;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.HColumnDescriptor;
-import org.apache.hadoop.hbase.HTableDescriptor;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Admin;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
-import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hbase.*;
+import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
-import org.apache.hadoop.hbase.filter.CompareFilter.CompareOp;
+import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.io.IOUtils;
+import org.apache.hadoop.util.Progressable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.stereotype.Component;
 
-public class HbaseDB implements Serializable{
+import java.io.*;
+import java.util.*;
 
-	private static final long serialVersionUID = -7137236230164276653L;
+@Component
+@ConditionalOnBean(HbaseConfig.class)
+public class HadoopUtils {
 
-	static Connection connection;
+	private static String[] suf = {"csv","txt","doc","docx","xls","xlsx","ppt","pptx"};
+	private static final String ROOT = "/";
 
-	private static class HbaseDBInstance{
-		private static final HbaseDB instance = new HbaseDB();
+	@Autowired
+	private Connection connection;
+
+	@Autowired
+	private FileSystem fs;
+
+
+	/*****************hdfs***************8*/
+	/**
+	 * 上传文件
+	 * @param filePath
+	 * @param dir
+	 * @throws Exception
+	 */
+	public void upload(String filePath, String dir) throws Exception {
+		InputStream in = new BufferedInputStream(new FileInputStream(filePath));
+		OutputStream out = fs.create(new Path(ROOT + dir), new Progressable() {
+
+			@Override
+			public void progress() {
+				//System.out.println("ok");
+			}
+		});
+		IOUtils.copyBytes(in, out, 4096, true);
 	}
-	public static HbaseDB getInstance() {
-		return HbaseDBInstance.instance;
+	/**
+	 * 已流形式上传
+	 * @param in
+	 * @param dir
+	 * @throws Exception
+	 */
+	public void upload(InputStream in, String dir) throws Exception {
+		OutputStream out = fs.create(new Path(dir), new Progressable() {
+			@Override
+			public void progress() {
+				//System.out.println("ok");
+			}
+		});
+		IOUtils.copyBytes(in, out, 4096, true);
+	}
+	/**
+	 * 下载文件
+	 * @param path
+	 * @param local
+	 * @throws Exception
+	 */
+	public void downLoad(String path,String local) throws Exception {
+		FSDataInputStream in = fs.open(new Path(path));
+		OutputStream out = new FileOutputStream(local);
+		IOUtils.copyBytes(in, out, 4096, true);
+	}
+	/**
+	 * 重命名文件
+	 * @param src
+	 * @param dst
+	 * @throws Exception
+	 */
+	public void rename(String src,String dst) throws Exception {
+		fs.rename(new Path(src), new Path(dst));
 	}
 
-	private HbaseDB() {
-		Configuration conf = HBaseConfiguration.create();
-		conf.set("hbase.cluster.distributed", PropertiesUtils.getString("hbase.cluster.distributed","false"));
-		conf.set("hbase.zookeeper.quorum", PropertiesUtils.getString("hbase.zookeeper.host","127.0.0.1"));
-		conf.set("hbase.zookeeper.property.clientPort",PropertiesUtils.getString("hbase.zookeeper.port","2181"));
-		//conf.set("hbase.rootdir", "hdfs://"+ PropertiesUtils.getProperty("hbase.zookeeper.host","master") + ":9000/hbase");
-		try {
-			connection = ConnectionFactory.createConnection(conf);
-		} catch (IOException e) {
-			e.printStackTrace();
+	/**
+	 * 创建文件夹
+	 * @param dir
+	 * @throws Exception
+	 */
+	public void mkdir(String dir) throws Exception {
+		if (!fs.exists(new Path(dir))) {
+			fs.mkdirs(new Path(dir));
 		}
 	}
-	
-	private Object readResolve(){
-		return getInstance();
+	/**
+	 * 删除文件及文件夹
+	 * @param name
+	 * @throws Exception
+	 */
+	public void delete(String name) throws Exception {
+		fs.delete(new Path(name), true);
 	}
 
-	public static TableName[] listTable() throws Exception {
+	/**
+	 * 查询文件夹
+	 * @param dir
+	 * @return
+	 * @throws Exception
+	 */
+	/*public List<FileSystemVo> queryAll(String dir) throws Exception {
+		FileStatus[] files = fs.listStatus(new Path(dir));
+		List<FileSystemVo> fileVos = new ArrayList<FileSystemVo>();
+		FileSystemVo f = null;
+		for (int i = 0; i < files.length; i++) {
+			f = new FileSystemVo();
+			if (files[i].isDir()) {
+				f.setName(files[i].getPath().getName());
+				f.setType("D");
+				f.setDate(DateUtil.longToString("yyyy-MM-dd HH:mm", files[i].getModificationTime()));
+				f.setNamep(files[i].getPath().getName());
+			} else {
+				f.setName(files[i].getPath().getName());
+				f.setType("F");
+				f.setDate(DateUtil.longToString("yyyy-MM-dd HH:mm", files[i].getModificationTime()));
+				f.setSize(BaseUtils.FormetFileSize(files[i].getLen()));
+				f.setNamep(f.getName().substring(0, f.getName().lastIndexOf(".")));
+				String s=FileUtils.getFileSufix(f.getName());
+				for (int j = 0; j < suf.length; j++) {
+					if (s.equals(suf[j])) {
+						f.setViewflag("Y");
+						break;
+					}
+				}
+			}
+			fileVos.add(f);
+		}
+		return fileVos;
+	}*/
+	/**
+	 * 移动或复制文件
+	 * @param path
+	 * @param dst
+	 * @param src true 移动文件;false 复制文件
+	 * @throws Exception
+	 */
+	/*public void copy(String[] path, String dst,boolean src) throws Exception {
+		Path[] paths = new Path[path.length];
+		for (int i = 0; i < path.length; i++) {
+			paths[i]=new Path(path[i]);
+		}
+		FileUtil.copy(fs, paths, fs, new Path(dst), src, true, conf);
+	}*/
+	
+	public static void main(String[] args) throws Exception {
+		HadoopUtils hdfsDB = new HadoopUtils();
+		hdfsDB.mkdir(ROOT+"weir33/qq");
+
+		// String path = "C://Users//Administrator//Desktop//jeeshop-jeeshop-master.zip";
+		// hdfsDB.upload(path, "weir/"+"jeeshop.zip");
+		// hdfsDB.queryAll(ROOT);
+//		hdfsDB.visitPath("hdfs://h1:9000/weir");
+//		for (Menu menu : menus) {
+//			System.out.println(menu.getName());
+//			System.out.println(menu.getPname());
+//		}
+//		hdfsDB.delete("weirqq");
+//		hdfsDB.mkdir("/weirqq");
+//		hdfsDB.tree("/admin");
+		System.out.println("ok");
+	}
+
+
+	/*****************hbase***************8*/
+
+	public TableName[] listTable() throws Exception {
 //		HBaseAdmin admin = new HBaseAdmin(connection);
 		Admin admin = connection.getAdmin();
 		TableName[] tableNames = admin.listTableNames();
@@ -71,7 +186,7 @@ public class HbaseDB implements Serializable{
 		return tableNames;
 	}
 
-	public static void deleteAllTable() throws Exception{
+	public void deleteAllTable() throws Exception{
 //		HBaseAdmin admin = new HBaseAdmin(connection);
 		Admin admin = connection.getAdmin();
 		TableName[] tableNames = admin.listTableNames();
@@ -84,7 +199,7 @@ public class HbaseDB implements Serializable{
 		admin.close();
 	}
 
-	public static void createTable(String tableName,String[] fams,int version) throws Exception {
+	public void createTable(String tableName,String[] fams,int version) throws Exception {
 //		HBaseAdmin admin = new HBaseAdmin(connection);
 		Admin admin = connection.getAdmin();
 		TableName tn = TableName.valueOf(tableName);
@@ -107,8 +222,8 @@ public class HbaseDB implements Serializable{
 		}
 		admin.close();
 	}
-	
-	public static void delTable(String tableName) throws Exception {
+
+	public void delTable(String tableName) throws Exception {
 //		HBaseAdmin admin = new HBaseAdmin(connection);
 		Admin admin = connection.getAdmin();
 		TableName tn = TableName.valueOf(tableName);
@@ -122,16 +237,16 @@ public class HbaseDB implements Serializable{
 		}
 		admin.close();
 	}
-	
-	public static long getGid(String row) throws Exception {
+
+	public long getGid(String row) throws Exception {
 		Table table_gid = connection.getTable(TableName.valueOf("gid"));
 //		HTable table_gid = new HTable(TableName.valueOf("gid"), connection);
 		long id = table_gid.incrementColumnValue(Bytes.toBytes(row), Bytes.toBytes("gid"), Bytes.toBytes(row), 1);
 		table_gid.close();
 		return id;
 	}
-	
-	public static void add(String tableName, String rowKey, String family, String qualifier, String value) throws IOException {
+
+	public void add(String tableName, String rowKey, String family, String qualifier, String value) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -142,7 +257,7 @@ public class HbaseDB implements Serializable{
 		table.close();
 	}
 
-	public static void add(String tableName, Long rowKey, String family, Long qualifier, String value) throws IOException {
+	public void add(String tableName, Long rowKey, String family, Long qualifier, String value) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -153,7 +268,7 @@ public class HbaseDB implements Serializable{
 		table.close();
 	}
 
-	public static void add(String tableName, Long rowKey01,Long rowKey02, String family, String qualifier, Long value) throws IOException {
+	public void add(String tableName, Long rowKey01,Long rowKey02, String family, String qualifier, Long value) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -169,7 +284,7 @@ public class HbaseDB implements Serializable{
 		table.close();
 	}
 
-	public static void add(String tableName, Long rowKey01,Long rowKey02,Long rowKey03, String family, String qualifier, Long value01, Long value02) throws IOException {
+	public void add(String tableName, Long rowKey01,Long rowKey02,Long rowKey03, String family, String qualifier, Long value01, Long value02) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -185,7 +300,7 @@ public class HbaseDB implements Serializable{
 		table.close();
 	}
 
-	public static void add(String tableName, Long rowKey01,Long rowKey02, String family, String qualifier, String value) throws IOException {
+	public void add(String tableName, Long rowKey01,Long rowKey02, String family, String qualifier, String value) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -209,7 +324,7 @@ public class HbaseDB implements Serializable{
 	 * @param value
 	 * @throws IOException
 	 */
-	public static void add(String tableName, Long rowKey, String family, String qualifier, String value) throws IOException {
+	public void add(String tableName, Long rowKey, String family, String qualifier, String value) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -228,7 +343,7 @@ public class HbaseDB implements Serializable{
 	 * @param value
 	 * @throws IOException
 	 */
-	public static void add(String tableName, Long rowKey, String family, String qualifier, Long value) throws IOException {
+	public void add(String tableName, Long rowKey, String family, String qualifier, Long value) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -247,7 +362,7 @@ public class HbaseDB implements Serializable{
 	 * @param value
 	 * @throws IOException
 	 */
-	public static void add(String tableName, String rowKey, String family, String qualifier, Long value) throws IOException {
+	public void add(String tableName, String rowKey, String family, String qualifier, Long value) throws IOException {
 		//连接到table
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -263,7 +378,7 @@ public class HbaseDB implements Serializable{
 	 * @param rowKey
 	 * @throws Exception
 	 */
-	public static void deleteRow(String tableName, String[] rowKey) throws Exception {
+	public void deleteRow(String tableName, String[] rowKey) throws Exception {
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
 		List<Delete> list = new ArrayList<Delete>();
@@ -274,8 +389,8 @@ public class HbaseDB implements Serializable{
 		table.delete(list);
 		table.close();
 	}
-	
-	public static void deleteColumns(String tableName,Long rowKey,String family, Long qualifier) throws Exception {
+
+	public void deleteColumns(String tableName,Long rowKey,String family, Long qualifier) throws Exception {
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
 		Delete delete = new Delete(Bytes.toBytes(rowKey));
@@ -284,15 +399,15 @@ public class HbaseDB implements Serializable{
 		table.delete(delete);
 		table.close();
 	}
-	public static void deleteRow(String tableName,Long rowKey01,Long rowKey02) throws Exception {
+	public void deleteRow(String tableName,Long rowKey01,Long rowKey02) throws Exception {
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
 		Delete delete = new Delete(Bytes.add(Bytes.toBytes(rowKey01), Bytes.toBytes(rowKey02)));
 		table.delete(delete);
 		table.close();
 	}
-	
-	public static long getIdByUsername(String name) {
+
+	public long getIdByUsername(String name) {
 		long id = 0;
 		try {
 //			HTable table = new HTable(TableName.valueOf("user_id"), connection);
@@ -309,7 +424,7 @@ public class HbaseDB implements Serializable{
 		}
 		return id;
 	}
-	
+
 	public boolean checkUsername(String name) {
 		try {
 //			HTable table = new HTable(TableName.valueOf("user_id"), connection);
@@ -328,8 +443,8 @@ public class HbaseDB implements Serializable{
 			return false;
 		}
 	}
-	
-	public static String getUserNameById(long id) {
+
+	public String getUserNameById(long id) {
 		String name = null;
 		try {
 //			HTable table = new HTable(TableName.valueOf("id_user"), connection);
@@ -346,8 +461,8 @@ public class HbaseDB implements Serializable{
 		}
 		return name;
 	}
-	
-	public static String getStringById(String tableName,Long rowKey,String family,String qualifier) {
+
+	public String getStringById(String tableName,Long rowKey,String family,String qualifier) {
 		String name = null;
 		try {
 //			HTable table = new HTable(TableName.valueOf(tableName), connection);
@@ -369,7 +484,7 @@ public class HbaseDB implements Serializable{
 	 * @param name
 	 * @return
 	 */
-	public static long getIdByDirName(String name) {
+	public long getIdByDirName(String name) {
 		long id = 0;
 		try {
 //			HTable table = new HTable(TableName.valueOf("hdfs_name"), connection);
@@ -386,8 +501,8 @@ public class HbaseDB implements Serializable{
 		}
 		return id;
 	}
-	
-	public static boolean checkEmail(String email) throws Exception {
+
+	public boolean checkEmail(String email) throws Exception {
 //		HTable table = new HTable(TableName.valueOf("email_user"), connection);
 		Table table = connection.getTable(TableName.valueOf("email_user"));
 		Get get = new Get(Bytes.toBytes(email));
@@ -401,7 +516,7 @@ public class HbaseDB implements Serializable{
 			return false;
 		}
 	}
-	
+
 	public long checkUser(String userName,String pwd) throws Exception {
 		long id = getIdByUsername(userName);
 		if (id==0) {
@@ -420,7 +535,7 @@ public class HbaseDB implements Serializable{
 		table.close();
 		return 0;
 	}
-	
+
 	public void queryAll(String tableName) throws Exception {
 //		HTable table = new HTable(TableName.valueOf(tableName), connection);
 		Table table = connection.getTable(TableName.valueOf(tableName));
@@ -435,7 +550,7 @@ public class HbaseDB implements Serializable{
 		}
 		table.close();
 	}
-	
+
 	public void queryAllHDFS(String username) throws Exception {
 //		HTable table = new HTable(TableName.valueOf("hdfs"), connection);
 		Table table = connection.getTable(TableName.valueOf("hdfs"));
@@ -450,12 +565,12 @@ public class HbaseDB implements Serializable{
 		}
 		table.close();
 	}
-	
-	public static void delByDir(String dir) throws Exception {
+
+	public void delByDir(String dir) throws Exception {
 //		HTable fileTable = new HTable(TableName.valueOf("filesystem"), connection);
 		Table fileTable = connection.getTable(TableName.valueOf("filesystem"));
 		Scan scan = new Scan();
-		Filter filter = new QualifierFilter(CompareOp.LESS_OR_EQUAL, new BinaryComparator(Bytes.toBytes(dir)));
+		Filter filter = new QualifierFilter(CompareFilter.CompareOp.LESS_OR_EQUAL, new BinaryComparator(Bytes.toBytes(dir)));
 		scan.setFilter(filter);
 		ResultScanner rs = fileTable.getScanner(scan);
 		for (Result r : rs) {
@@ -463,7 +578,7 @@ public class HbaseDB implements Serializable{
 		}
 		fileTable.close();
 	}
-	
+
 	public boolean follow(String oname,String dname) throws Exception {
 		long oid = this.getIdByUsername(oname);
 		long did = this.getIdByUsername(dname);
@@ -471,7 +586,7 @@ public class HbaseDB implements Serializable{
 			return false;
 		}
 		this.add("follow", oid, "name", did, dname);
-		
+
 		this.add("followed", did, oid, "userid", null, oid);
 		return true;
 	}
@@ -482,7 +597,7 @@ public class HbaseDB implements Serializable{
 			return false;
 		}
 		this.deleteColumns("follow", oid, "name", did);
-		
+
 		this.deleteRow("followed", did, oid);
 		return true;
 	}
@@ -519,43 +634,12 @@ public class HbaseDB implements Serializable{
 			add("share", uid,id, "content", "type", type[i]);
 			add("share", uid,id, "content", "path", path[i]);
 			add("share", uid,id, "content", "ts", DateUtils.dateTime2String(new Date(),DateUtils.FMT_yyyyMMddHHmmss));
-			
+
 			long suid = getIdByUsername(shareusername);
 			add("shareed", suid,uid,id, "shareid", null, uid,id);
 		}
 	}
-	/**
-	 * 分享列表
-	 * @param name
-	 * @return
-	 * @throws Exception
-	 */
-	public List<ShareVo> getshare(String name) throws Exception {
-		long uid = getIdByUsername(name);
-		Scan scan = new Scan();
-		scan.setStartRow(Bytes.toBytes(uid));
-		scan.setStopRow(Bytes.toBytes(uid+1));
-//		HTable share_table = new HTable(TableName.valueOf("share"), connection);
-		Table share_table = connection.getTable(TableName.valueOf("share"));
-		ResultScanner rs = share_table.getScanner(scan);
-		List<ShareVo> shareVos = new ArrayList<ShareVo>();
-		ShareVo share = null;
-		for (Result r : rs) {
-			Cell cellPath = r.getColumnLatestCell(Bytes.toBytes("content"), Bytes.toBytes("path"));
-			Cell cellTs = r.getColumnLatestCell(Bytes.toBytes("content"), Bytes.toBytes("ts"));
-			Cell cellType = r.getColumnLatestCell(Bytes.toBytes("content"), Bytes.toBytes("type"));
-			Cell cellDir = r.getColumnLatestCell(Bytes.toBytes("content"), Bytes.toBytes("dir"));
-			share = new ShareVo();
-			share.setShareid(Bytes.toString(r.getRow()));
-			share.setPath(Bytes.toString(CellUtil.cloneValue(cellPath)));
-			share.setTs(Bytes.toString(CellUtil.cloneValue(cellTs)));
-			share.setType(Bytes.toString(CellUtil.cloneValue(cellType)));
-			share.setDir(Bytes.toString(CellUtil.cloneValue(cellDir)));
-			shareVos.add(share);
-		}
-		share_table.close();
-		return shareVos;
-	}
+
 	/**
 	 * 新增记事本
 	 * @param username
@@ -568,7 +652,4 @@ public class HbaseDB implements Serializable{
 		add("book", uid, id, "content", null, content);
 	}
 
-	public static void main(String[] args) throws Exception {
-//		HbaseDB db = new HbaseDB();
-	}
 }

@@ -1,7 +1,7 @@
 package com.fengdis.common.component.rpc.redis;
 
 import com.alibaba.fastjson.parser.ParserConfig;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -12,7 +12,6 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
@@ -31,10 +30,11 @@ import java.time.Duration;
  */
 @Configuration
 @EnableCaching
+@ConditionalOnExpression("${redis.enabled:false}")
 public class RedisConfig extends CachingConfigurerSupport {
 
-    @Autowired
-    private JedisConnectionFactory jedisConnectionFactory;
+    /*@Autowired
+    private JedisConnectionFactory jedisConnectionFactory;*/
 
     /**
      * @description 自定义的缓存key的生成策略
@@ -146,7 +146,7 @@ public class RedisConfig extends CachingConfigurerSupport {
      * @return
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplate(JedisConnectionFactory jedisConnectionFactory ) {
+    public RedisTemplate<String, Object> redisTemplateFactory(JedisConnectionFactory jedisConnectionFactory ) {
         //设置序列化
         RedisSerializer<String> stringSerializer = new StringRedisSerializer();
         //Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);

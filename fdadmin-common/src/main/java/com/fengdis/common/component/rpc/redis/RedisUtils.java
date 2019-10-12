@@ -1,6 +1,7 @@
 package com.fengdis.common.component.rpc.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -11,13 +12,13 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * 基于spring和redis的redisTemplate工具类
  * 针对所有的hash 都是以h开头的方法 
  * 针对所有的Set 都是以s开头的方法                    不含通用方法 
  * 针对所有的List 都是以l开头的方法 
  */
 @Component
+@ConditionalOnBean(RedisTemplate.class)
 public class RedisUtils {
 
     @Autowired

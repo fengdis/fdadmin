@@ -3,6 +3,7 @@ package com.fengdis.common.component.rpc.redis;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
@@ -24,6 +25,7 @@ import java.util.Set;
  * @since: 2019/08/28 17:26
  */
 @Component
+@ConditionalOnBean(JedisPool.class)
 public class JedisUtils {
 	
 	private static final Logger logger = LoggerFactory.getLogger(JedisUtils.class);

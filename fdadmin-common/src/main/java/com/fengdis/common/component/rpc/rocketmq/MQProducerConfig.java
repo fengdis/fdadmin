@@ -7,6 +7,7 @@ import org.apache.rocketmq.client.producer.DefaultMQProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,9 +18,10 @@ import org.springframework.context.annotation.Configuration;
  * @since: 2019/08/28 17:26
  */
 @Configuration
-public class MQProducerFactory {
+@ConditionalOnExpression("${rocketmq.enabled:false}")
+public class MQProducerConfig {
 
-    public static final Logger logger = LoggerFactory.getLogger(MQProducerFactory.class);
+    public static final Logger logger = LoggerFactory.getLogger(MQProducerConfig.class);
 
     /**
      * 发送同一类消息的设置为同一个group，保证唯一,默认不需要设置，rocketmq会使用ip@pid(pid代表jvm名字)作为唯一标示
@@ -46,15 +48,10 @@ public class MQProducerFactory {
     @Value("${rocketmq.producer.retryTimesWhenSendFailed:1}")
     private int retryTimesWhenSendFailed;
 
-    @Value("${rocketmq.producer.isEnabled:true}")
-    private boolean isEnabled;
-
     @Bean
-    public DefaultMQProducer createRocketMQProducer() throws BaseExServiceException {
-        if(!isEnabled){
-            //throw new BaseExServiceException(BaseExServiceException.SERVICE_EXCEPTION,"producer is disabled");
-            return new DefaultMQProducer();
-        }
+    @ConditionalOnExpression("${rocketmq.producer.enabled:true}")
+    public DefaultMQProducer rocketMQProducerFactory() throws BaseExServiceException {
+
         if(StringUtils.isEmpty(groupName)){
             throw new BaseExServiceException(BaseExServiceException.SERVICE_EXCEPTION,"groupName is null");
         }

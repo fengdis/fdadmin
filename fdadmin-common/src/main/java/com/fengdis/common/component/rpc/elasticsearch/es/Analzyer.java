@@ -1,9 +1,5 @@
 package com.fengdis.common.component.rpc.elasticsearch.es;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -11,6 +7,10 @@ import org.wltea.analyzer.cfg.Configuration;
 import org.wltea.analyzer.cfg.DefaultConfig;
 import org.wltea.analyzer.dic.Dictionary;
 import org.wltea.analyzer.lucene.IKAnalyzer;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @version 1.0

@@ -32,7 +32,7 @@ public class MQConsumeTask {
         defaultMQPushConsumer.registerMessageListener(mqConsumeMsgListenerProcessor);
         try {
             defaultMQPushConsumer.start();
-            logger.info("****************启动队列消费程序*****************");
+            logger.info("****************启动队列消费程序成功*****************");
         } catch (MQClientException e) {
             logger.error("*****************启动队列消费程序异常****************");
         }

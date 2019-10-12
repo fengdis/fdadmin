@@ -8,6 +8,7 @@ import org.apache.rocketmq.common.consumer.ConsumeFromWhere;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,9 +19,10 @@ import org.springframework.context.annotation.Configuration;
  * @since: 2019/08/28 17:26
  */
 @Configuration
-public class MQConsumerFactory {
+@ConditionalOnExpression("${rocketmq.enabled:false}")
+public class MQConsumerConfig {
 
-    public static final Logger logger = LoggerFactory.getLogger(MQConsumerFactory.class);
+    public static final Logger logger = LoggerFactory.getLogger(MQConsumerConfig.class);
 
     @Value("${rocketmq.consumer.namesrvAddr:''}")
     private String namesrvAddr;
@@ -35,15 +37,9 @@ public class MQConsumerFactory {
     @Value("${rocketmq.consumer.consumeMessageBatchMaxSize:1}")
     private int consumeMessageBatchMaxSize;
 
-    @Value("${rocketmq.consumer.isEnabled:true}")
-    private boolean isEnabled;
-
     @Bean
-    public DefaultMQPushConsumer createRocketMQConsumer() throws BaseExServiceException {
-        if(!isEnabled){
-            //throw new BaseExServiceException(BaseExServiceException.SERVICE_EXCEPTION,"consumer is disabled");
-            return new DefaultMQPushConsumer();
-        }
+    @ConditionalOnExpression("${rocketmq.consumer.enabled:true}")
+    public DefaultMQPushConsumer rocketMQConsumerFactory() throws BaseExServiceException {
         if (StringUtils.isEmpty(groupName)){
             throw new BaseExServiceException(BaseExServiceException.SERVICE_EXCEPTION,"groupName is null");
         }
