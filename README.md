@@ -4,9 +4,7 @@
 
 > 阿里云通用云产品1888优惠券 ：[点我领取](https://promotion.aliyun.com/ntms/yunparter/invite.html?userCode=ann465rg)&nbsp;&nbsp;&nbsp;&nbsp;
 
-> 腾讯云通用云产品2860优惠券 ：[点我领取](https://cloud.tencent.com/redirect.php?redirect=1025&cps_key=198c8df2ed259157187173bc7f4f32fd&from=console)&nbsp;&nbsp;`(仅限新用户)`
-
-> 阿里云Hi拼购 限量爆款 低至199元/年 [点我进入](https://www.aliyun.com/acts/hi-group-buying?userCode=ann465rg)&nbsp;&nbsp;`(仅限新用户)`
+> 腾讯云通用云产品2860优惠券 ：[点我领取](https://cloud.tencent.com/act/cps/redirect?redirect=1040&cps_key=accd959470c3899d6ce94872393caf8d&from=console)&nbsp;&nbsp;`(仅限新用户)`
 
 ## 内置功能
 
@@ -40,10 +38,6 @@
 <table>
     <tr>
         <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin01.jpg"/></td>
-        <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin01.jpg"/></td>
-    </tr>
-    <tr>
-        <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin02.jpg"/></td>
         <td><img src="http://qiniu.fengdis.com/fdadmin/fdadmin02.jpg"/></td>
     </tr>
 </table>

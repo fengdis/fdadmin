@@ -1,6 +1,6 @@
 package com.fengdis.framework.web.service;
 
-import org.springframework.data.domain.Page;
+import com.fengdis.framework.web.domain.RedisVo;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -12,7 +12,7 @@ public interface RedisService {
      * @param key
      * @return
      */
-    List findByKey(String key,Pageable pageable);
+    List<RedisVo> findByKey(String key, Pageable pageable);
 
     /**
      * 查询验证码的值

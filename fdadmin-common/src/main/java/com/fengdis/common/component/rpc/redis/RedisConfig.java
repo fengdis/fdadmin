@@ -142,11 +142,11 @@ public class RedisConfig extends CachingConfigurerSupport {
     /**
      * RedisTemplate配置
      *
-     * @param jedisConnectionFactory
+     * @param redisConnectionFactory
      * @return
      */
     @Bean
-    public RedisTemplate<String, Object> redisTemplateFactory(JedisConnectionFactory jedisConnectionFactory ) {
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory ) {
         //设置序列化
         RedisSerializer<String> stringSerializer = new StringRedisSerializer();
         //Jackson2JsonRedisSerializer jackson2JsonRedisSerializer = new Jackson2JsonRedisSerializer(Object.class);
@@ -162,7 +162,7 @@ public class RedisConfig extends CachingConfigurerSupport {
 
         //配置redisTemplate
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<String, Object>();
-        redisTemplate.setConnectionFactory(jedisConnectionFactory);
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setKeySerializer(stringSerializer);//key序列化
         redisTemplate.setValueSerializer(jackson2JsonRedisSerializer);//value序列化
         redisTemplate.setHashKeySerializer(stringSerializer);//Hash key序列化
@@ -173,7 +173,8 @@ public class RedisConfig extends CachingConfigurerSupport {
          * (自定义fastJson序列化器需要开启AutoType)
          */
         // 全局开启AutoType，不建议使用
-        ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+        //ParserConfig.getGlobalInstance().setAutoTypeSupport(true);
+        ParserConfig.getGlobalInstance().addAccept("com.fengdis");
         // 建议使用这种方式，小范围指定白名单
         /*ParserConfig.getGlobalInstance().addAccept("me.zhengjie.domain");
         ParserConfig.getGlobalInstance().addAccept("me.zhengjie.modules.system.service.dto");
