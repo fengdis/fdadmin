@@ -37,7 +37,7 @@
         </div>
 
         <div class="col-sm-12 select-table table-striped">
-            <table id="bootstrap-table"></table>
+            <table id="bootstrap-table" data-mobile-responsive="true" style="table-layout:fixed"></table>
         </div>
     </div>
 </div>
@@ -69,7 +69,14 @@
                 },
                 {
                     field: 'value',
-                    title: 'value'
+                    title: 'value',
+                    cellStyle:{
+                        css:{
+                            "overflow": "hidden",
+                            "text-overflow": "ellipsis",
+                            "white-space": "nowrap"
+                        }
+                    }
                 }]
         };
         $.table.init(options);

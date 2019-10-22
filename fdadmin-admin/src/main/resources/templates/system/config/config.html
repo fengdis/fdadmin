@@ -36,7 +36,7 @@
 					</div>
 				</form>
 			</div>
-			
+
 	        <div class="btn-group-sm" id="toolbar" role="group">
 		        <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:config:add">
 		            <i class="fa fa-plus"></i> 新增
@@ -52,7 +52,7 @@
 		        </a>
 	        </div>
 	        <div class="col-sm-12 select-table table-striped">
-	            <table id="bootstrap-table"></table>
+	            <table id="bootstrap-table" data-mobile-responsive="true" style="table-layout:fixed"></table>
 	        </div>
 	    </div>
 	</div>
@@ -82,15 +82,28 @@
                 },
                 {
                     field: 'configName',
-                    title: '参数名称'
+                    title: '参数名称',
+					formatter: function(value, row, index) {
+						return $.table.tooltip(value);
+					}
                 },
                 {
                     field: 'configKey',
-                    title: '参数键名'
+                    title: '参数键名',
+					formatter: function(value, row, index) {
+						return $.table.tooltip(value);
+					}
                 },
                 {
                     field: 'configValue',
-                    title: '参数键值'
+                    title: '参数键值',
+					cellStyle:{
+						css:{
+							"overflow": "hidden",
+							"text-overflow": "ellipsis",
+							"white-space": "nowrap"
+						}
+					}
                 },
                 {
                     field: 'configType',

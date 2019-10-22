@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fengdis.system.mapper.SysOssMapper">
+    
+    <resultMap type="SysOss" id="SysOssResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileSuffix"    column="file_suffix"    />
+        <result property="url"    column="url"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="service"    column="service"    />
+    </resultMap>
+	
+	<sql id="selectSysOssVo">
+        select d.id, d.file_name, d.file_suffix, d.url, d.create_time, d.create_by, d.service
+        from sys_oss d
+    </sql>
+
+    <select id="selectSysOssList" parameterType="SysOss" resultMap="SysOssResult">
+        <include refid="selectSysOssVo"/>
+        <where>  
+            <if test="id != null "> and d.id = #{id}</if>
+             <if test="fileName != null "> and d.file_name = #{fileName}</if>
+             <if test="fileSuffix != null "> and d.file_suffix = #{fileSuffix}</if>
+             <if test="url != null "> and d.url = #{url})</if>
+             <if test="createTime != null "> and d.create_time &gt;= #{createTime}</if>
+             <if test="createBy != null "> and d.create_by = #{createBy}</if>
+             <if test="service != null "> and d.service = #{service}</if>
+         </where>
+    </select>
+    
+    <select id="selectSysOssById" parameterType="Long" resultMap="SysOssResult">
+        <include refid="selectSysOssVo"/>
+        where d.id = #{id}
+    </select>
+        
+    <insert id="insertSysOss" parameterType="SysOss">
+        insert into sys_oss
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">id,</if>
+			<if test="fileName != null  ">file_name,</if>
+			<if test="fileSuffix != null  ">file_suffix,</if>
+			<if test="url != null ">url,</if>
+			<if test="createTime != null  ">create_time,</if>
+			<if test="createBy != null  ">create_by,</if>
+			<if test="service != null  ">service,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">#{id},</if>
+			<if test="fileName != null  ">#{fileName},</if>
+			<if test="fileSuffix != null  ">#{fileSuffix},</if>
+			<if test="url != null  ">#{url},</if>
+			<if test="createTime != null  ">#{createTime},</if>
+			<if test="createBy != null  ">#{createBy},</if>
+			<if test="service != null  ">#{service},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateSysOss" parameterType="SysOss">
+        update districts
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null  ">file_name = #{fileName},</if>
+            <if test="fileSuffix != null  ">file_suffix = #{fileSuffix},</if>
+            <if test="url != null  ">url = #{url},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="createBy != null  ">create_by = #{createBy},</if>
+            <if test="service != null  ">service = #{service},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteSysOssById" parameterType="Long">
+        delete from sys_oss where id = #{id}
+    </delete>
+
+    <delete id="deleteSysOssByIds" parameterType="String">
+        delete from districts where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+	
+</mapper>
