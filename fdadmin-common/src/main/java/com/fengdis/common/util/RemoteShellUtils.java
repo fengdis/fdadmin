@@ -16,11 +16,6 @@ import java.nio.charset.Charset;
  */
 public class RemoteShellUtils {
 
-    public static void main(String[] args)throws Exception {
-        RemoteShellUtils remoteShellUtils = new RemoteShellUtils("39.105.155.44",22,"root","admin@aliyun");
-        System.out.println(remoteShellUtils.exec1("cd && ll"));
-    }
-
     private static final Logger logger = LoggerFactory.getLogger(RemoteShellUtils.class);
 
     private Connection conn;
