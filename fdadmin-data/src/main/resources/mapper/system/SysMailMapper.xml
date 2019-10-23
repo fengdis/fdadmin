@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fengdis.system.mapper.SysMailMapper">
+    
+    <resultMap type="SysMail" id="SysMailResult">
+        <result property="id"    column="id"    />
+        <result property="sender"    column="sender"    />
+        <result property="receiver"    column="receiver"    />
+        <result property="cc"    column="cc"    />
+        <result property="bcc"    column="bcc"    />
+        <result property="subject"    column="subject"    />
+        <result property="content"    column="content"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+    </resultMap>
+	
+	<sql id="selectSysMailVo">
+        select d.id, d.sender, d.receiver, d.cc, d.bcc, d.subject, d.content
+        from sys_mail d
+    </sql>
+
+    <select id="selectSysMailList" parameterType="SysMail" resultMap="SysMailResult">
+        <include refid="selectSysMailVo"/>
+        <where>  
+             <if test="id != null "> and d.id = #{id}</if>
+             <if test="sender != null and sender != '' "> and d.sender &gt;= #{sender}</if>
+             <if test="receiver != null and receiver != '' "> and d.receiver = #{receiver}</if>
+            <if test="cc != null "> and d.cc = #{cc}</if>
+            <if test="bcc != null "> and d.bcc = #{bcc}</if>
+            <if test="subject != null "> and d.subject = #{subject}</if>
+            <if test="content != null "> and d.content = #{content}</if>
+             <if test="createTime != null "> and d.create_time &gt;= #{createTime}</if>
+             <if test="createBy != null  and createBy != '' "> and d.create_by = #{createBy}</if>
+         </where>
+    </select>
+    
+    <select id="selectSysMailById" parameterType="Long" resultMap="SysMailResult">
+        <include refid="selectSysMailVo"/>
+        where d.id = #{id}
+    </select>
+        
+    <insert id="insertSysMail" parameterType="SysMail">
+        insert into sys_mail
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">id,</if>
+			<if test="sender != null  ">sender,</if>
+			<if test="receiver != null  ">receiver,</if>
+            <if test="cc != null ">cc,</if>
+            <if test="bcc != null  ">bcc,</if>
+            <if test="subject != null  ">subject,</if>
+            <if test="content != null  ">content,</if>
+            <if test="createTime != null  ">create_time,</if>
+            <if test="createBy != null  ">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null  ">#{id},</if>
+			<if test="sender != null  ">#{sender},</if>
+			<if test="receiver != null  ">#{receiver},</if>
+            <if test="cc != null ">#{cc},</if>
+            <if test="bcc != null  ">#{bcc},</if>
+            <if test="subject != null  ">#{subject},</if>
+            <if test="content != null  ">#{content},</if>
+            <if test="createTime != null  ">#{createTime},</if>
+            <if test="createBy != null  ">#{createBy},</if>
+         </trim>
+    </insert>
+	 
+    <update id="updateSysMail" parameterType="SysMail">
+        update sys_mail
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sender != null  ">sender = #{sender},</if>
+            <if test="receiver != null  ">receiver = #{receiver},</if>
+            <if test="cc != null ">cc = #{cc},</if>
+            <if test="bcc != null  ">bcc = #{bcc},</if>
+            <if test="subject != null  ">subject = #{subject},</if>
+            <if test="content != null  ">content = #{content},</if>
+            <if test="createTime != null  ">create_time = #{createTime},</if>
+            <if test="createBy != null  ">create_by = #{createBy},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+	<delete id="deleteSysMailById" parameterType="Long">
+        delete from sys_mail where id = #{id}
+    </delete>
+
+    <delete id="deleteSysMailByIds" parameterType="String">
+        delete from sys_mail where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+	
+</mapper>

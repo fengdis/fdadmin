@@ -38,16 +38,16 @@
 			</div>
 			
 	        <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
-				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:districts:add">
+				<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="tool:districts:add">
 					<i class="fa fa-plus"></i> 添加
 				</a>
-				<a class="btn btn-primary btn-edit disabled" onclick="$.operate.edit()" shiro:hasPermission="system:districts:edit">
+				<a class="btn btn-primary btn-edit disabled" onclick="$.operate.edit()" shiro:hasPermission="tool:districts:edit">
 					<i class="fa fa-edit"></i> 修改
 				</a>
-				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:districts:remove">
+				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="tool:districts:remove">
 					<i class="fa fa-remove"></i> 删除
 				</a>
-				<a class="btn btn-warning" onclick="demo()" shiro:hasPermission="system:districts:list">
+				<a class="btn btn-warning" onclick="demo()" shiro:hasPermission="tool:districts:list">
 					<i class="fa fa-cubes"></i> 使用demo
 				</a>
 			</div>
@@ -58,9 +58,9 @@
 	</div>
     <div th:include="include :: footer"></div>
     <script th:inline="javascript">
-        var editFlag = [[${@permission.hasPermi('system:districts:edit')}]];
-        var removeFlag = [[${@permission.hasPermi('system:districts:remove')}]];
-        var prefix = ctx + "system/districts";
+        var editFlag = [[${@permission.hasPermi('tool:districts:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('tool:districts:remove')}]];
+        var prefix = ctx + "tool/districts";
 
         $(function() {
             var options = {

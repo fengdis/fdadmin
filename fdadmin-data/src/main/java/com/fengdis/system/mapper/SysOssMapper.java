@@ -1,6 +1,6 @@
 package com.fengdis.system.mapper;
 
-import com.fengdis.common.core.dao.BaseMapper;
+/*import com.fengdis.common.core.dao.BaseMapper;*/
 import com.fengdis.system.domain.SysOss;
 
 import java.util.List;

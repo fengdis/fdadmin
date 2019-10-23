@@ -1,4 +1,4 @@
-package com.fengdis.web.controller.system;
+package com.fengdis.web.controller.tool;
 
 import com.fengdis.common.annotation.Log;
 import com.fengdis.common.core.controller.BaseController;
@@ -25,22 +25,22 @@ import java.util.List;
  * @date 2018-12-19
  */
 @Controller
-@RequestMapping("/system/districts")
+@RequestMapping("/tool/districts")
 public class DistrictsController extends BaseController
 {
-    private String prefix = "system/districts";
+    private String prefix = "tool/districts";
 	
 	@Autowired
 	private IDistrictsService districtsService;
 	
-	@RequiresPermissions("system:districts:view")
+	@RequiresPermissions("tool:districts:view")
 	@GetMapping()
 	public String districts()
 	{
 	    return prefix + "/districts";
 	}
 	
-	@RequiresPermissions("system:districts:list")
+	@RequiresPermissions("tool:districts:list")
 	@GetMapping("demo")
 	public String demo()
 	{
@@ -50,7 +50,7 @@ public class DistrictsController extends BaseController
 	/**
 	 * 查询地区列表
 	 */
-	@RequiresPermissions("system:districts:list")
+	@RequiresPermissions("tool:districts:list")
 	@PostMapping("/list")
 	@ResponseBody
 	public TableDataInfo list(Districts districts)
@@ -64,7 +64,7 @@ public class DistrictsController extends BaseController
 	/**
 	 * 导出地区列表
 	 */
-	@RequiresPermissions("system:districts:export")
+	@RequiresPermissions("tool:districts:export")
     @PostMapping("/export")
     @ResponseBody
     public ResponseEntity<String> export(Districts districts)
@@ -86,7 +86,7 @@ public class DistrictsController extends BaseController
 	/**
 	 * 新增保存地区
 	 */
-	@RequiresPermissions("system:districts:add")
+	@RequiresPermissions("tool:districts:add")
 	@Log(title = "地区", businessType = BusinessType.INSERT)
 	@PostMapping("/add")
 	@ResponseBody
@@ -113,7 +113,7 @@ public class DistrictsController extends BaseController
 	/**
 	 * 修改保存地区
 	 */
-	@RequiresPermissions("system:districts:edit")
+	@RequiresPermissions("tool:districts:edit")
 	@Log(title = "地区", businessType = BusinessType.UPDATE)
 	@PostMapping("/edit")
 	@ResponseBody
@@ -128,7 +128,7 @@ public class DistrictsController extends BaseController
 	/**
 	 * 删除地区
 	 */
-	@RequiresPermissions("system:districts:remove")
+	@RequiresPermissions("tool:districts:remove")
 	@Log(title = "地区", businessType = BusinessType.DELETE)
 	@PostMapping( "/remove")
 	@ResponseBody

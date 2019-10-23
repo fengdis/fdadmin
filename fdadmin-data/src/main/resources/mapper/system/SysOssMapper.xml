@@ -23,11 +23,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectSysOssVo"/>
         <where>  
             <if test="id != null "> and d.id = #{id}</if>
-             <if test="fileName != null "> and d.file_name = #{fileName}</if>
-             <if test="fileSuffix != null "> and d.file_suffix = #{fileSuffix}</if>
+             <if test="fileName != null  and fileName != '' "> and d.file_name = #{fileName}</if>
+             <if test="fileSuffix != null  and fileSuffix != '' "> and d.file_suffix = #{fileSuffix}</if>
              <if test="url != null "> and d.url = #{url})</if>
              <if test="createTime != null "> and d.create_time &gt;= #{createTime}</if>
-             <if test="createBy != null "> and d.create_by = #{createBy}</if>
+             <if test="createBy != null  and createBy != '' "> and d.create_by = #{createBy}</if>
              <if test="service != null "> and d.service = #{service}</if>
          </where>
     </select>
@@ -60,7 +60,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </insert>
 	 
     <update id="updateSysOss" parameterType="SysOss">
-        update districts
+        update sys_oss
         <trim prefix="SET" suffixOverrides=",">
             <if test="fileName != null  ">file_name = #{fileName},</if>
             <if test="fileSuffix != null  ">file_suffix = #{fileSuffix},</if>
@@ -77,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteSysOssByIds" parameterType="String">
-        delete from districts where id in
+        delete from sys_oss where id in
         <foreach item="id" collection="array" open="(" separator="," close=")">
             #{id}
         </foreach>

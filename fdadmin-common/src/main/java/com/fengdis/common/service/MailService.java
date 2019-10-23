@@ -73,7 +73,6 @@ public class MailService {
         } catch (Exception e) {
             logger.error("简单邮发送发生异常", e);
         }
-
     }
 
     /**
@@ -84,7 +83,6 @@ public class MailService {
      */
     public void sendHtmlMail(String to, String subject, String content) {
         MimeMessage message = mailSender.createMimeMessage();
-
         try {
             //true表示需要创建一个multipart message
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -109,7 +107,6 @@ public class MailService {
      */
     public void sendAttachmentsMail(String to, String subject, String content, String filePath){
         MimeMessage message = mailSender.createMimeMessage();
-
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom(from);
@@ -138,7 +135,6 @@ public class MailService {
      */
     public void sendInlineResourceMail(String to, String subject, String content, String rscPath, String rscId){
         MimeMessage message = mailSender.createMimeMessage();
-
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
             helper.setFrom(from);
@@ -247,6 +243,5 @@ public class MailService {
         }
         return toList.toString();
     }
-
 
 }

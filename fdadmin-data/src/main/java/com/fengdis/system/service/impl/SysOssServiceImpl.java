@@ -6,12 +6,11 @@ import com.fengdis.common.core.text.Convert;
 import com.fengdis.system.domain.SysOss;
 import com.fengdis.system.mapper.SysOssMapper;
 import com.fengdis.system.service.ISysOssService;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import tk.mybatis.mapper.entity.Example;
-import tk.mybatis.mapper.entity.Example.Criteria;
+/*import tk.mybatis.mapper.entity.Example;
+import tk.mybatis.mapper.entity.Example.Criteria;*/
 
 @Service("sysOssService")
 public class SysOssServiceImpl implements ISysOssService

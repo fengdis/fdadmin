@@ -3,7 +3,7 @@
 	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <meta charset="utf-8">
 <head>
-	<th:block th:include="include :: header('文件管理')" />
+	<th:block th:include="include :: header('存储管理')" />
 </head>
 <body class="gray-bg">
 	
@@ -32,16 +32,16 @@
 			</div>
 			
 	       <div class="btn-group-sm hidden-xs" id="toolbar" role="group">
-	            <a class="btn btn-success" id="upload" shiro:hasPermission="system:dict:add">
+	            <a class="btn btn-success" id="upload" shiro:hasPermission="tool:oss:add">
 	                <i class="fa fa-plus"></i> 上传
 	            </a>
-				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:dict:remove">
+				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="tool:oss:remove">
 		            <i class="fa fa-remove"></i> 删除
 		        </a>
-		        <a class="btn btn-primary" onclick="javascript:ossfig()" shiro:hasPermission="system:dict:config">
+		        <a class="btn btn-primary" onclick="javascript:ossfig()" shiro:hasPermission="tool:oss:config">
 		            <i class="fa fa-cogs"></i> 云储存配置
 		        </a>
-		        <a class="btn btn-warning" onclick="javascript:osseditor()" shiro:hasPermission="system:dict:add">
+		        <a class="btn btn-warning" onclick="javascript:osseditor()" shiro:hasPermission="tool:oss:add">
 		            <i class="fa fa-image"></i> 结合editor
 		        </a>
 	        </div>
@@ -54,9 +54,9 @@
 	<div th:include="include :: footer"></div>
 	<script th:src="@{/ajax/libs/ajaxfile/ajaxupload.js}"></script>
 	<script th:inline="javascript">
-		var editFlag = [[${@permission.hasPermi('system:oss:edit')}]];
-		var removeFlag = [[${@permission.hasPermi('system:oss:remove')}]];
-		var prefix = ctx + "system/oss";
+		var editFlag = [[${@permission.hasPermi('tool:oss:edit')}]];
+		var removeFlag = [[${@permission.hasPermi('tool:oss:remove')}]];
+		var prefix = ctx + "tool/oss";
 
 		$(function() {
 			var options = {

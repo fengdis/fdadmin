@@ -1,8 +1,9 @@
-package com.fengdis.web.controller.system;
+package com.fengdis.web.controller.tool;
 
 import com.alibaba.fastjson.JSON;
 import com.fengdis.common.base.BaseExServiceException;
 import com.fengdis.common.core.controller.BaseController;
+import com.fengdis.common.core.domain.AjaxResult;
 import com.fengdis.common.core.page.TableDataInfo;
 import com.fengdis.framework.util.ShiroUtils;
 import com.fengdis.framework.util.ValidatorUtils;
@@ -27,16 +28,18 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 文件上传
  */
 @Controller
-@RequestMapping("system/oss")
+@RequestMapping("tool/oss")
 public class SysOssController extends BaseController
 {
-    private String              prefix = "system/oss";
+    private String              prefix = "tool/oss";
 
     private final static String KEY    = CloudConstant.CLOUD_STORAGE_CONFIG_KEY;
 
@@ -46,7 +49,7 @@ public class SysOssController extends BaseController
     @Autowired
     private ISysConfigService sysConfigService;
 
-    @RequiresPermissions("system:dept:view")
+    @RequiresPermissions("tool:oss:view")
     @GetMapping()
     public String dept()
     {
@@ -57,7 +60,7 @@ public class SysOssController extends BaseController
      * 列表
      */
     @RequestMapping("list")
-    @RequiresPermissions("sys:oss:list")
+    @RequiresPermissions("tool:oss:list")
     @ResponseBody
     public TableDataInfo list(SysOss sysOss)
     {
@@ -70,7 +73,7 @@ public class SysOssController extends BaseController
      * 云存储配置信息
      */
     @RequestMapping("config")
-    @RequiresPermissions("sys:oss:config")
+    @RequiresPermissions("tool:oss:config")
     public String config(Model model)
     {
         String jsonconfig = sysConfigService.selectConfigByKey(CloudConstant.CLOUD_STORAGE_CONFIG_KEY);
@@ -84,7 +87,7 @@ public class SysOssController extends BaseController
      * 保存云存储配置信息
      */
     @RequestMapping("saveConfig")
-    @RequiresPermissions("sys:oss:config")
+    @RequiresPermissions("tool:oss:config")
     @ResponseBody
     public ResponseEntity<String> saveConfig(CloudStorageConfig config)
     {
@@ -112,7 +115,7 @@ public class SysOssController extends BaseController
      * 上传文件
      */
     @RequestMapping("/upload")
-    @RequiresPermissions("sys:oss:add")
+    @RequiresPermissions("tool:oss:add")
     @ResponseBody
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) throws Exception
     {
@@ -133,15 +136,20 @@ public class SysOssController extends BaseController
         ossEntity.setFileName(fileName);
         ossEntity.setCreateTime(new Date());
         ossEntity.setService(storage.getService());
-        // return toAjax(sysOssService.save(ossEntity)).put("url", ossEntity.getUrl()).put("fileName",ossEntity.getFileName());
-        return toAjax(sysOssService.save(ossEntity));
+
+        int rows = sysOssService.save(ossEntity);
+        Map<String,Object> map = new HashMap<>();
+        map.put("url", ossEntity.getUrl());
+        map.put("fileName",ossEntity.getFileName());
+        return rows > 0 ? AjaxResult.success(map) : AjaxResult.error();
+        //return toAjax(sysOssService.save(ossEntity));
     }
 
     /**
      * 修改
      */
     @GetMapping("edit/{ossId}")
-    @RequiresPermissions("sys:oss:edit")
+    @RequiresPermissions("tool:oss:edit")
     public String edit(@PathVariable("ossId") Long ossId, Model model)
     {
         SysOss sysOss = sysOssService.findById(ossId);
@@ -150,7 +158,7 @@ public class SysOssController extends BaseController
     }
 
     @GetMapping("editor")
-    @RequiresPermissions("sys:oss:add")
+    @RequiresPermissions("tool:oss:add")
     public String editor()
     {
         return prefix + "/editor";
@@ -160,7 +168,7 @@ public class SysOssController extends BaseController
      * 修改
      */
     @PostMapping("edit")
-    @RequiresPermissions("sys:oss:edit")
+    @RequiresPermissions("tool:oss:edit")
     @ResponseBody
     public ResponseEntity<String> editSave(SysOss sysOss)
     {
@@ -171,7 +179,7 @@ public class SysOssController extends BaseController
      * 删除
      */
     @RequestMapping("remove")
-    @RequiresPermissions("sys:oss:remove")
+    @RequiresPermissions("tool:oss:remove")
     @ResponseBody
     public ResponseEntity<String> delete(String ids)
     {
