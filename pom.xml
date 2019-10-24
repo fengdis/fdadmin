@@ -528,7 +528,7 @@
 			<dependency>
 				<groupId>cn.hutool</groupId>
 				<artifactId>hutool-all</artifactId>
-				<version>4.6.7</version>
+				<version><!--4.6.7-->[4.1.12,)</version>
 			</dependency>
 
 			<!--中文转换成拼音-->

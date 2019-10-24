@@ -1,5 +1,7 @@
 package com.fengdis.web.controller.tool;
 
+import cn.hutool.extra.mail.Mail;
+import cn.hutool.extra.mail.MailAccount;
 import com.alibaba.fastjson.JSON;
 import com.fengdis.common.base.BaseExServiceException;
 import com.fengdis.common.core.controller.BaseController;
@@ -7,20 +9,24 @@ import com.fengdis.common.core.domain.AjaxResult;
 import com.fengdis.common.core.page.TableDataInfo;
 import com.fengdis.common.core.text.Convert;
 import com.fengdis.common.service.MailService;
+import com.fengdis.common.util.EncryptUtils;
 import com.fengdis.framework.util.ShiroUtils;
 import com.fengdis.framework.util.ValidatorUtils;
 import com.fengdis.system.domain.SysMail;
 import com.fengdis.system.domain.SysOss;
 import com.fengdis.system.service.ISysConfigService;
 import com.fengdis.system.service.ISysMailService;
+import com.fengdis.system.service.ISysOssService;
 import com.fengdis.web.controller.system.cloud.*;
 import com.fengdis.web.controller.system.cloud.CloudConstant.CloudService;
 import com.fengdis.web.controller.system.cloud.valdator.AliyunGroup;
 import com.fengdis.web.controller.system.cloud.valdator.QcloudGroup;
 import com.fengdis.web.controller.system.cloud.valdator.QiniuGroup;
 import com.google.gson.Gson;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -51,6 +57,9 @@ public class SysMailController extends BaseController
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private ISysOssService sysOssService;
 
     @RequiresPermissions("tool:mail:view")
     @GetMapping()
@@ -94,6 +103,16 @@ public class SysMailController extends BaseController
     public ResponseEntity<String> saveConfig(MailConfig config)
     {
 
+        String jsonconfig = sysConfigService.selectConfigByKey(KEY);
+        MailConfig emailConfig = JSON.parseObject(jsonconfig, MailConfig.class);
+        try {
+            if(!config.getPassword().equals(emailConfig.getPassword())){
+                // 对称加密
+                config.setPassword(EncryptUtils.desEncrypt(config.getPassword()));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return toAjax(sysConfigService.updateValueByKey(KEY, new Gson().toJson(config)));
     }
 
@@ -112,7 +131,7 @@ public class SysMailController extends BaseController
     @ResponseBody
     public ResponseEntity<String> upload(@RequestParam("file") MultipartFile file) throws Exception
     {
-        /*if (file.isEmpty())
+        if (file.isEmpty())
         {
             throw new BaseExServiceException("上传文件不能为空");
         }
@@ -134,9 +153,12 @@ public class SysMailController extends BaseController
         Map<String,Object> map = new HashMap<>();
         map.put("url", ossEntity.getUrl());
         map.put("fileName",ossEntity.getFileName());
-        return rows > 0 ? AjaxResult.success(map) : AjaxResult.error();*/
-        return toAjax(0);
+        return rows > 0 ? AjaxResult.success(map) : AjaxResult.error();
+        //return toAjax(0);
     }
+
+    @Value("${mail.fromMail.addr:''}")
+    private String from;
 
     /**
      * 发送
@@ -146,10 +168,44 @@ public class SysMailController extends BaseController
     @ResponseBody
     public ResponseEntity<String> send(SysMail sysMail) throws Exception
     {
-        String jsonconfig = sysConfigService.selectConfigByKey(KEY);
-        MailConfig config = JSON.parseObject(jsonconfig, MailConfig.class);
-        sysMail.setSender(config.getUser());
-        mailService.sendMail(config.getName(), Convert.toStrArray(sysMail.getReceiver()),Convert.toStrArray(sysMail.getCc()),Convert.toStrArray(sysMail.getBcc()),sysMail.getSubject(),sysMail.getContent(),null,null);
+        /*String jsonconfig = sysConfigService.selectConfigByKey(KEY);
+        MailConfig mailConfig = JSON.parseObject(jsonconfig, MailConfig.class);*/
+
+        String[] receiver = StringUtils.isBlank(sysMail.getReceiver()) ? null : Convert.toStrArray(sysMail.getReceiver());
+        String[] cc = StringUtils.isBlank(sysMail.getCc()) ? null : Convert.toStrArray(sysMail.getCc());
+        String[] bcc = StringUtils.isBlank(sysMail.getBcc()) ? null : Convert.toStrArray(sysMail.getBcc());
+        mailService.sendMail(null, receiver, cc, bcc, sysMail.getSubject(), sysMail.getContent(),null,null);
+
+        /*if(mailConfig == null){
+            throw new BaseExServiceException("请先配置，再操作");
+        }
+        MailAccount account = new MailAccount();
+        account.setHost(mailConfig.getHost());
+        account.setPort(Integer.parseInt(mailConfig.getPort()));
+        account.setAuth(true);
+        try {
+            // 对称解密
+            account.setPass(EncryptUtils.desDecrypt(mailConfig.getPassword()));
+        } catch (Exception e) {
+            throw new BaseExServiceException(e.getMessage());
+        }
+        account.setFrom(mailConfig.getName()+"<"+mailConfig.getUser()+">");
+        //ssl方式发送
+        account.setSslEnable(true);
+        try {
+            Mail.create(account)
+                    .setTos(Convert.toStrArray(sysMail.getReceiver()))
+                    .setTitle(sysMail.getSubject())
+                    .setContent(sysMail.getContent())
+                    .setHtml(true)
+                    //关闭session
+                    .setUseGlobalSession(false)
+                    .send();
+        }catch (Exception e){
+            throw new BaseExServiceException(e.getMessage());
+        }*/
+
+        sysMail.setSender(from);
         return toAjax(sysMailService.save(sysMail));
     }
 

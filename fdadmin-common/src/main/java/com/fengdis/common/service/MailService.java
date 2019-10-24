@@ -38,7 +38,7 @@ public class MailService {
     private String from;
 
     @Value("${mail.fromMail.name:''}")
-    private String fromName;
+    private String name;
 
     @Value("${domain.name:''}")
     private String domain;
@@ -172,7 +172,7 @@ public class MailService {
                 if(nikeName != null){
                     nikeName = MimeUtility.encodeText(nikeName);
                 }else {
-                    nikeName = MimeUtility.encodeText(fromName);
+                    nikeName = MimeUtility.encodeText(name);
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
