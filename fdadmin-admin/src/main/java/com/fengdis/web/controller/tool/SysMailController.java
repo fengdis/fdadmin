@@ -116,11 +116,11 @@ public class SysMailController extends BaseController
         return toAjax(sysConfigService.updateValueByKey(KEY, new Gson().toJson(config)));
     }
 
-    @GetMapping("editor")
+    @GetMapping("send")
     @RequiresPermissions("tool:mail:add")
-    public String editor()
+    public String send()
     {
-        return prefix + "/editor";
+        return prefix + "/send";
     }
 
     /**
@@ -206,7 +206,21 @@ public class SysMailController extends BaseController
         }*/
 
         sysMail.setSender(from);
+        sysMail.setCreateBy(ShiroUtils.getLoginName());
+        sysMail.setCreateTime(new Date());
         return toAjax(sysMailService.save(sysMail));
+    }
+
+    /**
+     * 修改
+     */
+    @GetMapping("edit/{mailId}")
+    @RequiresPermissions("tool:mail:edit")
+    public String edit(@PathVariable("mailId") Long mailId, Model model)
+    {
+        SysMail sysMail = sysMailService.findById(mailId);
+        model.addAttribute("sysMail", sysMail);
+        return prefix + "/edit";
     }
 
     /**

@@ -2,21 +2,17 @@ package com.fengdis.system.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 邮件
  */
-@Table(name = "sys_mail")
 public class SysMail implements Serializable
 {
     //
     private static final long serialVersionUID = 1356257283938225230L;
 
-    @Id
     private Long id;
 
     /** 发送人 */

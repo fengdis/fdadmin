@@ -2,7 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" >
 <meta charset="utf-8">
 <head>
-	<th:block th:include="include :: header('结合editor')" />
+	<th:block th:include="include :: header('发送邮件')" />
 </head>
 <link th:href="@{/ajax/libs/summernote/summernote.css}" rel="stylesheet"/>
 <link th:href="@{/ajax/libs/summernote/summernote-bs3.css}" rel="stylesheet"/>
@@ -12,7 +12,7 @@
 			<div class="form-group">
 				<label class="col-sm-3 control-label">收件人邮箱：</label>
 				<div class="col-sm-8">
-					<input class="form-control" type="text" name="receiver" id="receiver">
+					<input class="form-control" type="text" name="receiver" id="receiver" required>
 				</div>
 			</div>
 			<div class="form-group">
@@ -30,7 +30,7 @@
 			<div class="form-group">
 				<label class="col-sm-3 control-label">邮件标题：</label>
 				<div class="col-sm-8">
-					<input class="form-control" type="text" name="subject" id="subject">
+					<input class="form-control" type="text" name="subject" id="subject" required>
 				</div>
 			</div>
 
@@ -49,13 +49,13 @@
 			lang : 'zh-CN',
 			callbacks: {
 				onImageUpload: function (files) {
-					sendFile(files[0], this);
+					uploadFile(files[0], this);
 				}
 			}
 		});
 
 		// 上传文件
-		function sendFile(file, obj) {
+		function uploadFile(file, obj) {
 			var data = new FormData();
 			data.append("file", file);
 			$.ajax({
@@ -78,6 +78,29 @@
 				}
 			});
 		}
+
+		/**/
+		$("#form-mail-edit").validate({
+			onkeyup: false,
+			rules:{
+				receiver:{
+					required:true,
+				},
+				subject:{
+					required:true,
+				}
+			},
+			messages: {
+				"receiver": {
+					required: "请输入接收人邮箱",
+				},
+				"subject": {
+					required: "请输入邮件标题",
+				}
+			},
+			focusCleanup: true
+		});
+
 		function submitHandler() {
 			var content = $('.summernote').summernote('code');//获取编辑器内容
 			document.getElementById("content").value = content;

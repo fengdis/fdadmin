@@ -38,7 +38,7 @@
 				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="tool:oss:remove">
 		            <i class="fa fa-remove"></i> 删除
 		        </a>
-		        <a class="btn btn-primary" onclick="javascript:ossfig()" shiro:hasPermission="tool:oss:config">
+		        <a class="btn btn-primary" onclick="javascript:ossconfig()" shiro:hasPermission="tool:oss:config">
 		            <i class="fa fa-cogs"></i> 云储存配置
 		        </a>
 		        <a class="btn btn-warning" onclick="javascript:osseditor()" shiro:hasPermission="tool:oss:add">
@@ -144,7 +144,7 @@
 			};
 		}
 		
-		function ossfig() {
+		function ossconfig() {
 			var url = prefix+'/config';
 			$.modal.open("云储存配置", url);
 		}

@@ -51,8 +51,11 @@ public class SysOssController extends BaseController
 
     @RequiresPermissions("tool:oss:view")
     @GetMapping()
-    public String dept()
+    public String oss(Model model)
     {
+        String jsonconfig = sysConfigService.selectConfigByKey(CloudConstant.CLOUD_STORAGE_CONFIG_KEY);
+        CloudStorageConfig config = JSON.parseObject(jsonconfig, CloudStorageConfig.class);
+        model.addAttribute("config", config);
         return prefix + "/oss";
     }
 
