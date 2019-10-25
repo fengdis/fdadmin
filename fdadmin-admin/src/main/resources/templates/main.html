@@ -28,7 +28,7 @@
             <blockquote class="text-danger">
                 <marquee scrollamount="10" onmouseout="this.start()" onmouseover="this.stop()">
                     <span id="marquee" style="font-size: 20px;font-weight: bold">
-                        欢迎您:[[${user.userName}]],您的登录时间为&nbsp;&nbsp;&nbsp;&nbsp;
+                        欢迎您:[[${user.userName}]]&nbsp;&nbsp;&nbsp;&nbsp;
                         <span th:each="notice : ${notice2}">
                             [[${notice.noticeTitle}]]
                         </span>
