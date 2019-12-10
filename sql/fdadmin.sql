@@ -5,13 +5,13 @@
  Source Server Type    : MySQL
  Source Server Version : 50725
  Source Host           : 127.0.0.1:3306
- Source Schema         : ry
+ Source Schema         : fdadmin
 
  Target Server Type    : MySQL
  Target Server Version : 50725
  File Encoding         : 65001
 
- Date: 25/10/2019 14:39:04
+ Date: 27/11/2019 08:23:22
 */
 
 SET NAMES utf8mb4;
@@ -159,7 +159,7 @@ CREATE TABLE `QRTZ_SCHEDULER_STATE` (
 -- Records of QRTZ_SCHEDULER_STATE
 -- ----------------------------
 BEGIN;
-INSERT INTO `QRTZ_SCHEDULER_STATE` VALUES ('fengdisScheduler', 'feng1571985286007', 1571985543794, 15000);
+INSERT INTO `QRTZ_SCHEDULER_STATE` VALUES ('fengdisScheduler', 'feng1571985286007', 1572000767190, 15000);
 COMMIT;
 
 -- ----------------------------
@@ -3950,7 +3950,7 @@ CREATE TABLE `sys_logininfor` (
   `msg` varchar(255) DEFAULT '' COMMENT '提示消息',
   `login_time` datetime DEFAULT NULL COMMENT '访问时间',
   PRIMARY KEY (`info_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=388 DEFAULT CHARSET=utf8 COMMENT='系统访问记录';
+) ENGINE=InnoDB AUTO_INCREMENT=389 DEFAULT CHARSET=utf8 COMMENT='系统访问记录';
 
 -- ----------------------------
 -- Records of sys_logininfor
@@ -4234,6 +4234,7 @@ INSERT INTO `sys_logininfor` VALUES (384, 'admin', '127.0.0.1', '内网IP', 'Chr
 INSERT INTO `sys_logininfor` VALUES (385, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Mac OS X', '0', '登录成功', '2019-10-25 14:11:02');
 INSERT INTO `sys_logininfor` VALUES (386, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Mac OS X', '1', '验证码错误', '2019-10-25 14:30:26');
 INSERT INTO `sys_logininfor` VALUES (387, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Mac OS X', '0', '登录成功', '2019-10-25 14:30:31');
+INSERT INTO `sys_logininfor` VALUES (388, 'admin', '127.0.0.1', '内网IP', 'Chrome', 'Mac OS X', '0', '登录成功', '2019-10-25 17:41:25');
 COMMIT;
 
 -- ----------------------------
@@ -4638,7 +4639,7 @@ CREATE TABLE `sys_oss` (
   `create_by` varchar(64) NOT NULL DEFAULT '' COMMENT '上传人',
   `service` tinyint(2) NOT NULL DEFAULT '1' COMMENT '服务商',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COMMENT='文件上传';
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COMMENT='文件上传';
 
 -- ----------------------------
 -- Records of sys_oss
@@ -4909,7 +4910,7 @@ CREATE TABLE `sys_user` (
 -- Records of sys_user
 -- ----------------------------
 BEGIN;
-INSERT INTO `sys_user` VALUES (1, 103, 'admin', '管理员', '00', 'admin@fengdis.com', '18522207564', '0', '/profile/avatar/2019/10/03/763c04aa619844f9f5b4d5e11e380b07.png', '9b1e0b37a6c57df438fc4d5975aeda3a', 'd27f48', '0', '0', '127.0.0.1', '2019-10-25 14:30:31', 'admin', '2018-03-16 11:33:00', 'admin', '2019-10-25 14:30:31', '管理员');
+INSERT INTO `sys_user` VALUES (1, 103, 'admin', '管理员', '00', 'admin@fengdis.com', '18522207564', '0', '/profile/avatar/2019/10/03/763c04aa619844f9f5b4d5e11e380b07.png', '9b1e0b37a6c57df438fc4d5975aeda3a', 'd27f48', '0', '0', '127.0.0.1', '2019-10-25 17:41:25', 'admin', '2018-03-16 11:33:00', 'admin', '2019-10-25 17:41:25', '管理员');
 INSERT INTO `sys_user` VALUES (2, 104, 'jack', '杰克马', '00', 'jack@fengdis.com', '18500000001', '0', '', '8e6d98b90472783cc73c17047ddccf36', '222222', '0', '0', '127.0.0.1', '2018-03-16 11:33:00', 'admin', '2018-03-16 11:33:00', 'admin', '2019-10-03 09:21:47', '市场总监');
 INSERT INTO `sys_user` VALUES (3, 103, 'fengdi', '封迪', '00', 'fengdi@fengdis.com', '18522207564', '0', '', '4808b16279b19ddab1cf6b65607bffdf', 'edcab4', '0', '0', '127.0.0.1', '2019-10-03 09:24:08', 'admin', '2019-09-24 10:44:45', 'admin', '2019-10-03 09:28:33', '');
 INSERT INTO `sys_user` VALUES (101, 108, '11', '1', '00', '923610744@qq.com', '13211111111', '0', '', '6276ee7313cd8e8b75ea75fb659709f3', '551b94', '0', '2', '', NULL, 'admin', '2019-10-03 20:54:34', '', NULL, NULL);
@@ -4933,13 +4934,6 @@ CREATE TABLE `sys_user_online` (
   `expire_time` int(5) DEFAULT '0' COMMENT '超时时间，单位为分钟',
   PRIMARY KEY (`sessionId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='在线用户记录';
-
--- ----------------------------
--- Records of sys_user_online
--- ----------------------------
-BEGIN;
-INSERT INTO `sys_user_online` VALUES ('384e2d5b-26be-47a9-9889-28cdc0f005fe', 'admin', '研发部门', '127.0.0.1', '内网IP', 'Chrome', 'Mac OS X', 'on_line', '2019-10-25 14:10:56', '2019-10-25 14:30:32', 1800000);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user_post
