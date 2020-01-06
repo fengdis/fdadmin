@@ -2,6 +2,7 @@ package com.fengdis.common.component.rpc.websocket;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fengdis.common.queue.ThreadPoolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -120,8 +121,8 @@ public class WsHandler extends TextWebSocketHandler {
 		for(WebSocketSession webSocketSession : allSession){
 			final WebSocketSession webSocketSession4userId = webSocketSession;
 			// 多线程群发
-			new Thread(new Runnable() {
-
+			ThreadPoolUtil.getExcutorService().submit(new Runnable() {
+				@Override
 				public void run() {
 					try {
 						if (webSocketSession4userId.isOpen()) {
@@ -133,7 +134,7 @@ public class WsHandler extends TextWebSocketHandler {
 					}
 				}
 
-			}).start();
+			});
 		}
 	}
 

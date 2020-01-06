@@ -119,7 +119,7 @@ public class WeChatService {
 
         return accessToken;
 
-        /*new Thread(new Runnable() {
+        /*ThreadPoolUtil.getExcutorService().submit(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -161,7 +161,7 @@ public class WeChatService {
                     }
                 }
             }
-        }).start();*/
+        });*/
 
     }
 

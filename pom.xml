@@ -511,11 +511,11 @@
 			</dependency>
 
 			<!-- 增加sql解析所需的正则依赖 -->
-			<dependency>
+			<!--<dependency>
 				<groupId>org.antlr</groupId>
 				<artifactId>antlr4-runtime</artifactId>
 				<version>3.5</version>
-			</dependency>
+			</dependency>-->
 
 			<!-- ssh远程 -->
 			<dependency>
